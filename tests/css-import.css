@@ -1,7 +1,8 @@
 .css-import-detection span {
-	display:block;
-	color:green;
+	display: block;
+	color: green;
 }
+
 .css-import-detection div {
-	display:none;
+	display: none;
 }

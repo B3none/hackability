@@ -1,17 +1,19 @@
 <?php
-header("X-XSS-Protection: 0");
 require('../inc/functions.inc.php');
 require('../inc/inspectorLogger.class.php');
+
+header("X-XSS-Protection: 0");
+
 $logger = new InspectorLogger();
 $logger->init();
 ?>
 <!doctype HTML>
 <html>
 <head>
-<meta charset="UTF-8" />
-<title>Inspector</title>
-<script src="<?php echo htmlentities(getUrl(), ENT_QUOTES)?>js/inspector.js"></script>
-<link href="<?php echo htmlentities(getUrl(), ENT_QUOTES)?>styles.css" rel="stylesheet" />
+    <meta charset="UTF-8" />
+    <title>Inspector</title>
+    <script src="<?= htmlentities(getUrl(), ENT_QUOTES)?>js/inspector.js"></script>
+    <link href="<?= htmlentities(getUrl(), ENT_QUOTES)?>styles.css" rel="stylesheet" />
 </head>
 <body>
 <form autocomplete="off" onsubmit="return false;">
@@ -61,41 +63,45 @@ $logger->init();
 </div>
 <script>
 !function(){
-  var params = Inspector.getParams(location.search.slice(1));
-  Inspector.setDomObjects({input: document.getElementById('input'), output: document.getElementById('output'), usage: document.getElementById('usage')});
-  if(location.search.length) {
-    if(params.blind) {
-      Inspector.setCallbacks({sendRootHTML: function(objName, html){
-        var xhr = new XMLHttpRequest();
-        html = '<div class="output"><div>'+html+'</div></div>';
-        xhr.open('POST', '<?php echo htmlentities(getUrl(), ENT_QUOTES)?>save.php', true);
-        xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
-        xhr.send('objName='+encodeURIComponent(objName)+'&html='+encodeURIComponent(html));
-      }});
-    }
-    if(params.html) {
-      Inspector.inspect(params.html, true);
-    }
-    if(window.addEventListener) {
-  		window.addEventListener('load', function(){
-        if(typeof params.input === 'string' && params.input.length) {
-          setTimeout(function(){
-            Inspector.inspect(params.input, false, false, params);
-          }, 50);
+    var params = Inspector.getParams(location.search.slice(1));
+
+    Inspector.setDomObjects({input: document.getElementById('input'), output: document.getElementById('output'), usage: document.getElementById('usage')});
+
+    if (location.search.length) {
+        if (params.blind) {
+            Inspector.setCallbacks({sendRootHTML: function(objName, html) {
+                var xhr = new XMLHttpRequest();
+                html = '<div class="output"><div>'+html+'</div></div>';
+                xhr.open('POST', '<?= htmlentities(getUrl(), ENT_QUOTES)?>save.php', true);
+                xhr.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+                xhr.send('objName='+encodeURIComponent(objName)+'&html='+encodeURIComponent(html));
+            }});
         }
-  		},false);
-  	} else if(window.attachEvent) {
-  		window.attachEvent('onload', function(){
-        if(typeof params.input === 'string' && params.input.length) {
-          setTimeout(function(){
-            Inspector.inspect(params.input, false, false, params);
-          }, 50);
+
+        if (params.html) {
+            Inspector.inspect(params.html, true);
         }
-  		});
-  	}
-  } else if(location.hash.length) {
-    Inspector.inspect(location.hash.slice(1));
-  }
+
+        if (window.addEventListener) {
+            window.addEventListener('load', function() {
+                if (typeof params.input === 'string' && params.input.length) {
+                    setTimeout(function() {
+                        Inspector.inspect(params.input, false, false, params);
+                    }, 50);
+                }
+            },false);
+        } else if (window.attachEvent) {
+            window.attachEvent('onload', function() {
+                if (typeof params.input === 'string' && params.input.length) {
+                    setTimeout(function(){
+                        Inspector.inspect(params.input, false, false, params);
+                    }, 50);
+                }
+            });
+        }
+    } else if (location.hash.length) {
+        Inspector.inspect(location.hash.slice(1));
+    }
 }();
 </script>
 </body>
